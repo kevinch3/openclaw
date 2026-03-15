@@ -1,3 +1,35 @@
+> ## 🔧 Fork Notice — WhatsApp `mentionPatterns` Fix
+>
+> **This is a fork of [openclaw/openclaw](https://github.com/openclaw/openclaw) with one targeted bug fix:**
+>
+> ### Problem
+>
+> When an OpenClaw agent is configured with `mentionPatterns` (e.g. `"clawdio:"`) in a WhatsApp group,
+> the bot incorrectly responds to **any bare `@mention`** of its number — even messages that don't match
+> the configured text patterns. This happens because `isBotMentionedFromTargets()` short-circuits to
+> JID-only matching as soon as native WhatsApp `@mention` metadata is present, bypassing text patterns entirely.
+>
+> ### Fix (branch: [`fix/jid-mention-ignores-text-patterns`](https://github.com/kevinch3/openclaw/tree/fix/jid-mention-ignores-text-patterns))
+>
+> In `extensions/whatsapp/src/auto-reply/mentions.ts`, the JID-match block is skipped when
+> `mentionRegexes` are configured — making **text patterns authoritative**:
+>
+> ```diff
+> - if (hasMentions && !isSelfChat) {
+> + if (hasMentions && !isSelfChat && !(mentionCfg.mentionRegexes?.length > 0)) {
+> ```
+>
+> **Result:** `@mention` alone → no response. `clawdio: hello` → responds normally.
+>
+> ### Who this helps
+>
+> Anyone using OpenClaw on WhatsApp groups with `mentionPatterns` set and finding the bot responds
+> to every `@mention` regardless of text content.
+>
+> **Upstream PR / tracking:** open issue or PR at [openclaw/openclaw](https://github.com/openclaw/openclaw) if you want this merged upstream.
+
+---
+
 # 🦞 OpenClaw — Personal AI Assistant
 
 <p align="center">
