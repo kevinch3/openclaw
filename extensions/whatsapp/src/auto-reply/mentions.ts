@@ -46,7 +46,10 @@ export function isBotMentionedFromTargets(
   const isSelfChat = isSelfChatMode(targets.self.e164, mentionCfg.allowFrom);
 
   const hasMentions = targets.normalizedMentions.length > 0;
-  if (hasMentions && !isSelfChat) {
+  // When mentionRegexes are configured (i.e. the agent has mentionPatterns set),
+  // skip native JID-mention matching entirely. This prevents the bot from
+  // responding to bare @mentions that don't include the required text trigger.
+  if (hasMentions && !isSelfChat && !(mentionCfg.mentionRegexes?.length > 0)) {
     for (const mention of targets.normalizedMentions) {
       if (identitiesOverlap(targets.self, mention)) {
         return true;

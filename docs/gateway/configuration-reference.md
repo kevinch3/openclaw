@@ -770,6 +770,10 @@ Group messages default to **require mention** (metadata mention or safe regex pa
 - **Text patterns**: Safe regex patterns in `agents.list[].groupChat.mentionPatterns`. Invalid patterns and unsafe nested repetition are ignored.
 - Mention gating is enforced only when detection is possible (native mentions or at least one pattern).
 
+> **Note:** When `mentionPatterns` are configured for an agent, native WhatsApp
+> JID @mentions alone will not trigger the agent — the message must match one of
+> the configured patterns. This prevents unwanted responses from bare @mentions.
+
 ```json5
 {
   messages: {
